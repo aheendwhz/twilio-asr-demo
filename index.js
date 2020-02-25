@@ -64,3 +64,8 @@ app.post('/echo', function (req, res) {
 
 
 app.listen(8080);
+
+
+module.exports = {
+  app
+};
