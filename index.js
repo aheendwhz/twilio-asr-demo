@@ -8,8 +8,25 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
- 
-app.get('/', function (req, res) {
+
+
+app.get('/siproute', function (req, res) {
+  
+  const sipResponse = new VoiceResponse;
+  const dial = sipResponse.dial();
+
+  dial.sip('sip:442038290030@staging.dev.babelforce.com?X-Will-Custom=foobar');
+
+  res.set('Content-Type', 'text/xml');
+  res.end(sipResponse.toString());
+
+});
+
+
+
+// ASR function
+
+app.get('/asr', function (req, res) {
   
   const twiml = new VoiceResponse;
   
@@ -19,7 +36,7 @@ app.get('/', function (req, res) {
     input: 'speech',
     language: 'en-US',
     speechTimeout: 4,
-    speechModel: 'phone_call',
+    speechModel: 'phone_call'
 
   });
 
@@ -64,8 +81,3 @@ app.post('/echo', function (req, res) {
 
 
 app.listen(8080);
-
-
-module.exports = {
-  app
-};
