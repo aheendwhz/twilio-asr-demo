@@ -10,7 +10,7 @@ Hacky little POC app to demonstrate how babelforce can integrate with ASR in a t
 
 ### Run development server
 
-```bash
+```sh
 # shell 1
 $ ngrok http 8080
 
