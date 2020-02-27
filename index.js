@@ -106,8 +106,32 @@ app.get('/siproute', function (req, res) {
 });
 
 
+app.get('/qs', function (req, res) {
+
+  const input = {
+    confidence: '0.65',
+    transcript: 'This is a transcript of speech',
+    keyword: 'anschriftenaenderung'
+  }
+
+  const baseUrl = 'sip:442038290030@staging.dev.babelforce.com'
+
+  const fullUrl = encodeURI(
+    baseUrl + 
+    '?x-babelforce-session-transcript=' + 
+    input.transcript +
+    'x-babelforce-session-keyword=' +
+    input.keyword);
 
 
+  const twim = new VoiceResponse;
+  const sipForward = twim.dial();
+
+  sipForward.sip(fullUrl);
+
+  console.log(twim.toString());
+  res.end();
+});
 
 
 
