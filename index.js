@@ -10,17 +10,20 @@ app.use(express.urlencoded({ extended: true }));
 
 
 
+// configure this route in twilio to test BABSER-3564 
+
 app.get('/siproute', function (req, res) {
   
   const sipResponse = new VoiceResponse;
   const dial = sipResponse.dial();
 
-  dial.sip('sip:442038290030@staging.dev.babelforce.com?X-Will-Custom=foobar');
+  dial.sip('sip:442038290030@staging.dev.babelforce.com?x-babelforce-session-foo=bar&x-babelforce-application-id=480b86569e3a4f8c8faa745486b4bc6d');
 
   res.set('Content-Type', 'text/xml');
   res.end(sipResponse.toString());
 
 });
+
 
 
 
