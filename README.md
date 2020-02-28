@@ -24,3 +24,14 @@ Ensure that the voice callback base URL for your twilio number is set to the `ht
 
 ![twilio number config](assets/twilio_config.png "twilio number config")
 
+
+---
+
+## Todo
+
+- [ ] test whole flow by enabling `res.end(twim.toString());` at end of `/thanks` route
+- [ ] automate deployment to GCP function or AWS lambda (https://babelforce.atlassian.net/browse/BABSER-3566)
+- [ ] tweak timeout and other settings to improve speech capture experience 
+
+
+
