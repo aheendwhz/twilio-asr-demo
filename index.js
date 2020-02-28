@@ -2,6 +2,7 @@
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const express = require('express');
 const _ = require('lodash');
+const xmlFormat = require('xml-formatter');
 
 const app = express();
 
@@ -24,6 +25,7 @@ const voiceDefaults = {
 };
 
 
+// initial route to perform ASR and send result to /thanks 
 app.get('/asr', function (req, res) {
   
   const twiml = new VoiceResponse;
@@ -49,20 +51,14 @@ app.get('/asr', function (req, res) {
 
 app.post('/thanks', function (req, res) {
 
-  const confidence = req.body.Confidence;
-  const speechResult = req.body.SpeechResult;
-
   const speechRec = {
-    confidenceScore: confidence,
-    transcript: speechResult
+    transcript: req.body.SpeechResult,
+    confidence: req.body.Confidence
   }
 
-  const proc = x => _.split(_.toLower(x), ', ');
-  
-  const hintsProcessed = proc(hints);
-  const speechResultProcessed = proc(speechResult);
-
-  const matches = _.intersection(_.intersection(hintsProcessed, speechResultProcessed), keywords);
+  // process transcript and look for matches
+  const processedTranscript = _.split(_.toLower(speechRec.transcript), ', ');
+  const matches = _.intersection(processedTranscript, keywords);
 
   if (matches.length > 0) {
     speechRec.keywordMatch = 'anschriftenaenderung'
@@ -70,24 +66,27 @@ app.post('/thanks', function (req, res) {
     speechRec.keywordMatch = 'no-match'
   }
 
-  // speecRec is the object to use in the next step
-  // TODO concatenate query string for SIP request param:
-  // - x-babelforce-session-keyword --> `${speechRec.keywordMatch}`
-  // - x-babelforce-session-transcript --> url-stringify `${speechRec.transcript}`
-  // - x-babelforce-session-confidence --> transform float to low, medium, high
-  //   values, or string score out of 10?  
-  console.log(speechRec);
+  // construct SIP URI with speech rec params  
+  const baseUrl = 'sip:442038290030@staging.dev.babelforce.com';
+  const pref = 'x-babelforce-session-';
 
+  const fullUrl = `${baseUrl}?${pref}transcript=${speechRec.transcript}&${pref}keyword=${speechRec.keywordMatch}&${pref}confidence=${speechRec.confidence}`;
 
-  // confirmation message and end request
-  const response = new VoiceResponse;
-  response.say(voiceDefaults, 'Moment ich leite Sie gleich an einen Mitarbeiter, der Ihnen mit der Anschriftenänderung helfen kann, weiter');
+  // twiML part
+  const twim = new VoiceResponse;
+  const sipForward = twim.dial();
 
+  sipForward.sip(encodeURI(fullUrl));
+
+  // debug
+  console.log(xmlFormat(twim.toString()));
+  
   res.set('Content-Type', 'text/xml');
-  res.end(response.toString());
+
+  // set this when BABSER-3564 is done in order to send SIP to babelforce
+  //res.end(twim.toString());
+  res.end();
 });
-
-
 
 
 
@@ -103,34 +102,6 @@ app.get('/siproute', function (req, res) {
   res.set('Content-Type', 'text/xml');
   res.end(sipResponse.toString());
 
-});
-
-
-app.get('/qs', function (req, res) {
-
-  const input = {
-    confidence: '0.65',
-    transcript: 'This is a transcript of speech',
-    keyword: 'anschriftenaenderung'
-  }
-
-  const baseUrl = 'sip:442038290030@staging.dev.babelforce.com'
-
-  const fullUrl = encodeURI(
-    baseUrl + 
-    '?x-babelforce-session-transcript=' + 
-    input.transcript +
-    'x-babelforce-session-keyword=' +
-    input.keyword);
-
-
-  const twim = new VoiceResponse;
-  const sipForward = twim.dial();
-
-  sipForward.sip(fullUrl);
-
-  console.log(twim.toString());
-  res.end();
 });
 
 

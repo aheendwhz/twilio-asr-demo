@@ -16,6 +16,7 @@
     "twilio": "^3.39.5"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "xml-formatter": "^1.2.0"
   }
 }
