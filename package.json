@@ -4,7 +4,7 @@
   "description": "Twilio ASR demo app",
   "main": "api/index.js",
   "scripts": {
-    "dev": "now dev --listen 127.0.0.1:8080"
+    "serve": "now dev --listen 127.0.0.1:8080"
   },
   "author": "wjconnor123@gmail.com",
   "license": "ISC",
@@ -13,5 +13,9 @@
   },
   "devDependencies": {
     "now": "^17.0.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aheendwhz/twilio-asr-demo.git"
   }
 }

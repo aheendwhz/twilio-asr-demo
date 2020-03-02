@@ -15,7 +15,7 @@ module.exports = (req, res) => {
   
   const gather = twiml.gather({
     action: '/api/forward',
-    method: 'GET',
+    method: 'POST',
     input: 'speech',
     language: 'de-DE',
     hints: hints,

@@ -1,14 +1,10 @@
 
 // echo test
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
 
-  console.log('request:', req.body);
-
-  const respond = {
-    echo: req.body
-  } 
+  const { body } = req;
 
   res.status(200);
-  res.send(respond);
+  res.end(`The request param was ${body.foo}`);
 
 };

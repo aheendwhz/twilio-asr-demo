@@ -8,11 +8,13 @@ const ibNumber = 'sip:442039051180@trunk.marleyspoon.babelforce.com'
 
 module.exports = (req, res) => {
 
+  const { query } = req;
+
   // json-stringify and base64-encode ASR result
   const speechRec = JSON.stringify(
     {
-      transcript: req.body.SpeechResult,
-      confidence: req.body.Confidence
+      transcript: query.SpeechResult,
+      confidence: query.Confidence
     }
   );
 
@@ -20,7 +22,6 @@ module.exports = (req, res) => {
   const b64String = Buffer.from(speechRec).toString('base64');  
   const head = 'X-Babelforce-Session-Set';
   const fullUrl = `${ibNumber}?${head}=${b64String}`;
-
 
   // twiML part
   const twim = new VoiceResponse;
