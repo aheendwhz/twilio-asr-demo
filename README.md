@@ -29,8 +29,9 @@ Ensure that the voice callback base URL for your twilio number is set to the `ht
 
 ## Todo
 
-- [ ] test whole flow by enabling `res.end(twim.toString());` at end of `/thanks` route
-- [ ] automate deployment to GCP function or AWS lambda (https://babelforce.atlassian.net/browse/BABSER-3566)
+- [ ] **BUG**: first call to `/api/asr` is working, but currently request params sent by twilio to `/api/forward` are not being parsed by the function
+- [x] test whole flow by enabling `res.end(twim.toString());` at end of `/thanks` route
+- [x] automate deployment to GCP function or AWS lambda (https://babelforce.atlassian.net/browse/BABSER-3566) *actually went with Zeit Now*
 - [ ] tweak timeout and other settings to improve speech capture experience 
 
 

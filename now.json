@@ -1,0 +1,16 @@
+{
+  "headers": [
+    {
+      "source": "/api/(asr|forward)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/xml" 
+        }
+      ]
+    }
+  ],
+  "github": {
+    "enabled": false
+  }
+}
