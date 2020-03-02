@@ -25,6 +25,10 @@ const voiceDefaults = {
 };
 
 
+// babelforce IB number to forward to
+const ibNumber = 'sip:442039051180@trunk.marleyspoon.babelforce.com'
+
+
 // initial route to perform ASR and send result to /thanks 
 app.get('/asr', function (req, res) {
   
@@ -51,26 +55,23 @@ app.get('/asr', function (req, res) {
 
 app.post('/thanks', function (req, res) {
 
-  const speechRec = {
-    transcript: req.body.SpeechResult,
-    confidence: req.body.Confidence
-  }
+  // json-stringify and base64-encode ASR result
+  const speechRec = JSON.stringify(
+    {
+      transcript: req.body.SpeechResult,
+      confidence: req.body.Confidence
+    }
+  );
 
-  // process transcript and look for matches
-  const processedTranscript = _.split(_.toLower(speechRec.transcript), ', ');
-  const matches = _.intersection(processedTranscript, keywords);
-
-  if (matches.length > 0) {
-    speechRec.keywordMatch = 'anschriftenaenderung'
-  } else {
-    speechRec.keywordMatch = 'no-match'
-  }
+  const b64String = Buffer.from(speechRec).toString('base64');
+  
 
   // construct SIP URI with speech rec params  
-  const baseUrl = 'sip:442038290030@staging.dev.babelforce.com';
-  const pref = 'x-babelforce-session-';
+  const head = 'X-Babelforce-Session-Set';
 
-  const fullUrl = `${baseUrl}?${pref}transcript=${speechRec.transcript}&${pref}keyword=${speechRec.keywordMatch}&${pref}confidence=${speechRec.confidence}`;
+  //const fullUrl = `${baseUrl}?${pref}transcript=${speechRec.transcript}&${pref}keyword=${speechRec.keywordMatch}&${pref}confidence=${speechRec.confidence}`;
+  const fullUrl = `${ibNumber}?${head}=${b64String}`;
+
 
   // twiML part
   const twim = new VoiceResponse;
@@ -79,30 +80,13 @@ app.post('/thanks', function (req, res) {
   sipForward.sip(encodeURI(fullUrl));
 
   // debug
-  console.log(xmlFormat(twim.toString()));
+  //console.log(xmlFormat(twim.toString()));
   
   res.set('Content-Type', 'text/xml');
-
-  // set this when BABSER-3564 is done in order to send SIP to babelforce
-  //res.end(twim.toString());
-  res.end();
+  res.end(twim.toString());
 });
 
 
-
-// configure this route in twilio to test BABSER-3564 
-
-app.get('/siproute', function (req, res) {
-  
-  const sipResponse = new VoiceResponse;
-  const dial = sipResponse.dial();
-
-  dial.sip('sip:442038290030@staging.dev.babelforce.com?x-babelforce-session-foo=bar&x-babelforce-application-id=480b86569e3a4f8c8faa745486b4bc6d');
-
-  res.set('Content-Type', 'text/xml');
-  res.end(sipResponse.toString());
-
-});
 
 
 
