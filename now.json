@@ -13,8 +13,5 @@
         "Content-Type": "application/xml"
       }
     }
-  ],
-  "github": {
-    "enabled": false
-  }
+  ]
 }
