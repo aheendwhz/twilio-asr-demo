@@ -1,4 +1,3 @@
-
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 
 // babelforce IB number to forward to
@@ -23,13 +22,14 @@ module.exports = (req, res) => {
   const fullUrl = `${ibNumber}?${head}=${b64String}`;
 
   // twiML part
-  const twim = new VoiceResponse;
-  const sipForward = twim.dial();
+  const twiml = new VoiceResponse;
+  const sipForward = twiml.dial();
 
   sipForward.sip(encodeURI(fullUrl));
 
-  res.status(200).send(twim.toString());
-  
+  res.setHeader('content-type', 'application/xml');
+  res.setHeader('cache-control', 'max-age=0, s-maxage=86400');
+  res.status(200).send(twiml.toString());
 };
 
 

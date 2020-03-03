@@ -81,7 +81,8 @@ Any pushes to this project's `master` will also trigger a deployment.
 - [x] **BUG**: first call to `/api/asr` is working, but currently request params sent by twilio to `/api/forward` are not being parsed by the function
 - [x] test whole flow by enabling `res.end(twim.toString());` at end of `/thanks` route
 - [x] automate deployment to GCP function or AWS lambda (https://babelforce.atlassian.net/browse/BABSER-3566) *actually went with Zeit Now*
-- [ ] tweak timeout and other settings to improve speech capture experience 
-
+- [x] tweak timeout and other settings to improve speech capture experience
+- [x] enable flexible configuration of hints and input/speech language through env variables 
+- [x] convert to twilio Functions
 
 
